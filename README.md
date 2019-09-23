@@ -36,11 +36,17 @@ Columns:
 6. Phenotype (just put '0' or '1' for all if you just want to process genotypes)
 7. etc. Genotypes coded with 1's and 2's for each allele. Will have 2 columns for each locus. 
 
+Example:
+![](/Screenshots/plink_format.png)
+
 -----------------------------------------------------------------------
 #### How do I recode my genotypes?
 
 
 We, in animal breeding, typically store genotypes in a dense format with 0 = homozygous, 1 = heterozygous, 2 = homozygous for alternative allele, 5 = missing and NO spaces. Only the ID, space, genotypes in one long string. This genotype coding represents the allele count at a locus (number of copies of the B allele usually). 
+
+This is the DENSE format we typically are converting from:
+![](/Screenshots/geno_dense_format.png)
 
 PLINK wants it coded as follows:
 *) 0 --> '1 1'
