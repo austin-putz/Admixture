@@ -10,20 +10,20 @@ Please see the website for [Admixture](http://software.genetics.ucla.edu/admixtu
 -----------------------------------------------------------------------
 ## Friendly Advice
 
-Just look through the online documentation for [PLINK](http://zzz.bwh.harvard.edu/plink/data.shtml#ped) and learn how to input files. This will provide a much fuller documenation than presented here. Here is only for getting data into Admixture and not everything PLINK can do, which is a lot. PLINK will be needed to process and clean genotypes if you haven't do so already so it's quite useful. Errors will occur in Admixture if not cleaned properly. 
+Look through the online documentation for [PLINK](http://zzz.bwh.harvard.edu/plink/data.shtml#ped) if you have time and learn how to format input files. This will provide a much fuller documenation than presented here. This tutorial is only for getting data into Admixture and not everything PLINK can do, which is a lot. PLINK will be needed to process and clean genotypes if you haven't do so already so it's quite useful. Errors will occur in Admixture if not cleaned properly. 
 
 -----------------------------------------------------------------------
 ## Input Formats
 
-The input file format for genotypes is the same as PLINK. PLINK uses -9 as missing by default I believe. 
+The input file format for genotypes is the same as PLINK. 
 
 -----------------------------------------------------------------------
 ### Genotype (pedigree or .ped) file
 
 Summary:
-*) Space Separated
-*) 6 Initial Columns
-*) Genotypes also space separated and require 2 alleles for each locus. Therefore 2*n, where n is the number of SNPs. They are either allele coded (e.g. 'G G', 'C G', 'C C') for **12 coded** (i.e. '1 1', '1 2', '2 2', '0 0'. We will use the 12 coding for this tutorial. Animal breeders typically store genotypes in 012/5 format. 
+* Space Separated
+* 6 Initial Columns (see below)
+* Genotypes also space separated and require 2 alleles for each locus. Therefore 2p, where p is the number of SNPs. They are either allele coded (e.g. 'G G', 'C G', 'C C') for **12 coded** (i.e. '1 1', '1 2', '2 2', '0 0'. We will use the 12 coding for this tutorial. Animal breeders typically store genotypes in a dense (no space), "0125" format. 
 
 Each individual is on one line with a few starter columns and then the genotypes 
 
@@ -42,24 +42,49 @@ Example:
 -----------------------------------------------------------------------
 #### How do I recode my genotypes?
 
-
 We, in animal breeding, typically store genotypes in a dense format with 0 = homozygous, 1 = heterozygous, 2 = homozygous for alternative allele, 5 = missing and NO spaces. Only the ID, space, genotypes in one long string. This genotype coding represents the allele count at a locus (number of copies of the B allele usually). 
 
 This is the DENSE format we typically are converting from:
 ![](/Screenshots/geno_dense_format.png)
 
 PLINK wants it coded as follows:
-*) 0 --> '1 1'
-*) 1 --> '1 2'
-*) 2 --> '2 2'
-*) 5 --> '0 0'
+* 0 --> '1 1'
+* 1 --> '1 2'
+* 2 --> '2 2'
+* 5 --> '0 0'
 
 Which is quite easy to do in a bash script because you can convert 2's first, then 1's, then 0's, then 5's and you shouldn't ever search and replace the same number. If you do this out of order, you will get major mistakes. You cannot convert 1 --> '1 2' then try to replace 2's, it will replace the wrong 2's with '2 2' as well! BE CAREFUL with this!
+
+```bash
+sed 's/2/ 2 2 /g' initial_file.txt > intermediate_file_1.txt
+sed 's/1/ 1 2 /g' initial_file.txt > intermediate_file_1.txt
+sed 's/0/ 1 1 /g' initial_file.txt > intermediate_file_1.txt
+sed 's/5/ 0 0 /g' initial_file.txt | tr -s " " > intermediate_file_1.txt
+```
+
+The last command also uses the `tr` command to remove extra spaces (multiple in a row, now just 1). You can use the `time` command to see how long this is taking. It will be the slowest part of the entire script if you try to write one yourself. 
 
 --------------------------------------------------------------------------
 ### Map (.map) file
 
-The map file. 
+This file is not required by Admixture, but here it is if you want to know. 
+
+The map file is a little different than normal as well. We typically save the map file in a simple format ordered in the same order as the dense genotype string (e.g. "0102010050120"). 
+
+Columns:
+1. SNP name or number
+2. Chromosome (1,2,...n, usually don't allow X/Y, replace with next number)
+3. Position in base-pairs on the chromosome
+
+PLINK needs the following:
+1. Chromosome (1,2,...,n, X, Y, or 0 if unplaced)
+2. rs# or SNP identification
+3. Genetic distance (morgans)
+4. Base-pair position on chromosome
+
+Just put '0's for genetic distance if missing. We typically don't have this information. 
+
+
 
 
 
