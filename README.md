@@ -1,5 +1,5 @@
 # Admixture
-=============
+======================================================================
 
 Quick start quide for using Admixture. Admixture is software designed to estimate breed composition (fractions) in human or livestock species. The documentation is pretty good compared to other free, open-sourced software. Usually there is no documentation or it's terrible (see STRUCTURE's documentation, if you can find it...). 
 
@@ -7,18 +7,18 @@ Input format is the same as PLINK (6 initial columns followed by 1/2 formatted g
 
 Please see the website for [Admixture](http://software.genetics.ucla.edu/admixture/). You can download Admixture from [here](http://software.genetics.ucla.edu/admixture/download.html). The manual is availabe as a pdf within the last link. 
 
+======================================================================
 ## Friendly Advice
-===================
 
 Just look through the online documentation for [PLINK](http://zzz.bwh.harvard.edu/plink/data.shtml#ped) and learn how to input files. This will provide a much fuller documenation than presented here. Here is only for getting data into Admixture and not everything PLINK can do, which is a lot. PLINK will be needed to process and clean genotypes if you haven't do so already so it's quite useful. Errors will occur in Admixture if not cleaned properly. 
 
+======================================================================
 ## Input Formats
-=================
 
 The input file format for genotypes is the same as PLINK. PLINK uses -9 as missing by default I believe. 
 
+-----------------------------------------------------------------------
 ### Genotype (pedigree or .ped) file
--------------------------------------
 
 Summary:
 *) Space Separated
@@ -36,8 +36,9 @@ Columns:
 6. Phenotype (just put '0' or '1' for all if you just want to process genotypes)
 7. etc. Genotypes coded with 1's and 2's for each allele. Will have 2 columns for each locus. 
 
+-----------------------------------------------------------------------
 #### How do I recode my genotypes?
-----------------------------------
+
 
 We, in animal breeding, typically store genotypes in a dense format with 0 = homozygous, 1 = heterozygous, 2 = homozygous for alternative allele, 5 = missing and NO spaces. Only the ID, space, genotypes in one long string. This genotype coding represents the allele count at a locus (number of copies of the B allele usually). 
 
@@ -49,8 +50,8 @@ PLINK wants it coded as follows:
 
 Which is quite easy to do in a bash script because you can convert 2's first, then 1's, then 0's, then 5's and you shouldn't ever search and replace the same number. If you do this out of order, you will get major mistakes. You cannot convert 1 --> '1 2' then try to replace 2's, it will replace the wrong 2's with '2 2' as well! BE CAREFUL with this!
 
+--------------------------------------------------------------------------
 ### Map (.map) file
----------------------
 
 The map file. 
 
