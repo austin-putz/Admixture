@@ -57,10 +57,12 @@ Which is quite easy to do in a bash script because you can convert 2's first, th
 
 ```bash
 sed 's/2/ 2 2 /g' initial_file.txt > intermediate_file_1.txt
-sed 's/1/ 1 2 /g' initial_file.txt > intermediate_file_1.txt
-sed 's/0/ 1 1 /g' initial_file.txt > intermediate_file_1.txt
-sed 's/5/ 0 0 /g' initial_file.txt | tr -s " " > intermediate_file_1.txt
+sed 's/1/ 1 2 /g' intermediate_file_1.txt > intermediate_file_2.txt
+sed 's/0/ 1 1 /g' intermediate_file_2.txt > intermediate_file_3.txt
+sed 's/5/ 0 0 /g' intermediate_file_3.txt | tr -s " " > intermediate_file_4.txt
 ```
+
+You can use the `-i` command for search and replace 'in place' or just change the original file, but this is more portable across computers (for instance the OSX doesn't take this option by default without downloading the GNU version of sed I believe). 
 
 The last command also uses the `tr` command to remove extra spaces (multiple in a row, now just 1). You can use the `time` command to see how long this is taking. It will be the slowest part of the entire script if you try to write one yourself. 
 
@@ -85,7 +87,55 @@ PLINK needs the following:
 Just put '0's for genetic distance if missing. We typically don't have this information. 
 
 
+--------------------------------------------------------------------------
+## Running Admixture
 
+First, make sure your genotype file has been through quality control (QC). If not use PLINK to output a new .ped file with the updated genotypes. Subset based on missing rate (call rates) of SNPs and animals. Also minor allele frequency (MAF) and anything else that PLINK can do. 
+
+Next, simply run:
+
+```
+admixture genotype_file.ped 3
+```
+
+Where genotype_file.ped is the formatted genotype file with 6 columns prior to the genotypes as shown above; '3' (K number) is the number of clusters if you have 3 different genetic lines mixing (common in animal breeding). K is used to indicate the number of clusters in K-means for example and is therefore used here to indicate the number of ancestrial populations. 
+
+--------------------------------------------------------------------------
+### Selecting the correct 'K' value
+
+Selecting the best K value can be performed with CV and the `--cv=10` flag to do 10 fold CV. The default is 5-fold with just the `--cv` flag. You can do the following command to run the program for each value of K.
+
+```
+for K in 1 2 3 4 5; do
+  admixture --cv genotype_file.ped $K | tee log${K}.out
+done
+```
+
+The tee command allows the output to be printed to stdout while also saving the output to a file independently for each K value. Then remove the output you need with the following command. 
+
+```
+grep -h CV log*.out
+```
+
+Will print the CV errors for each. Pick the one that minimized the CV error. Sometimes there isn't much difference between K's and you'll need to use your judgement at times. 
+
+--------------------------------------------------------------------------
+### Bootstrapping to get SE's
+
+```
+admixture -B100 genotype_file.ped 3
+```
+
+Will do 100 bootstrap samples and place the SE estimates in a file called `genotype_file.Q_se` if the original file was called `genotype_file.ped`. Q stands for the breed composition fractions estimated. 
+
+--------------------------------------------------------------------------
+### Using parallel computing
+
+```
+admixture genotype_file.ped 3 -j16
+```
+
+Will use 16 processors if they are available. On the HPC you can ask for more cores/cpus. 
 
 
 
