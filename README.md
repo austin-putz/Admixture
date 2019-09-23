@@ -1,5 +1,5 @@
 # Admixture
-======================================================================
+-----------------------------------------------------------------------
 
 Quick start quide for using Admixture. Admixture is software designed to estimate breed composition (fractions) in human or livestock species. The documentation is pretty good compared to other free, open-sourced software. Usually there is no documentation or it's terrible (see STRUCTURE's documentation, if you can find it...). 
 
@@ -7,12 +7,12 @@ Input format is the same as PLINK (6 initial columns followed by 1/2 formatted g
 
 Please see the website for [Admixture](http://software.genetics.ucla.edu/admixture/). You can download Admixture from [here](http://software.genetics.ucla.edu/admixture/download.html). The manual is availabe as a pdf within the last link. 
 
-======================================================================
+-----------------------------------------------------------------------
 ## Friendly Advice
 
 Just look through the online documentation for [PLINK](http://zzz.bwh.harvard.edu/plink/data.shtml#ped) and learn how to input files. This will provide a much fuller documenation than presented here. Here is only for getting data into Admixture and not everything PLINK can do, which is a lot. PLINK will be needed to process and clean genotypes if you haven't do so already so it's quite useful. Errors will occur in Admixture if not cleaned properly. 
 
-======================================================================
+-----------------------------------------------------------------------
 ## Input Formats
 
 The input file format for genotypes is the same as PLINK. PLINK uses -9 as missing by default I believe. 
